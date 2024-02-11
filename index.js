@@ -26,7 +26,7 @@ const { check, validationResult } = require('express-validator');
 //}));
 
 mongoose.connect( process.env.CONNECTION_URI, 
-{ useNewUrlParser: true, useUnifiedTopology: true });
+  { useNewUrlParser: true, useUnifiedTopology: true });
 
 //mongoose.connect('mongodb://localhost:27017/finalattempt', 
 //{ useNewUrlParser: true, useUnifiedTopology: true });
@@ -38,11 +38,11 @@ let auth = require('./auth')(app);
 
 
    // READ/GET all users
-   app.get('/users',passport.authenticate("jwt", { session: false }),
+   app.get('/Users',passport.authenticate("jwt", { session: false }),
     async (req, res) => {
     await Users.find()
-      .then((users) => {
-        res.status(201).json(users);
+      .then((Users) => {
+        res.status(201).json(Users);
       })
       .catch((err) => {
         console.error(err);
@@ -52,7 +52,7 @@ let auth = require('./auth')(app);
 
 
     // Get a user by username
-app.get('/users/:Username',
+app.get('/Users/:Username',
  passport.authenticate("jwt", { session: false }),
  async (req, res) => {
   await Users.findOne({ Username: req.params.Username })
@@ -75,7 +75,7 @@ app.get('/users/:Username',
   Email: String,
   Birthday: Date
 }*/
-pp.post('/users',
+app.post('/Users',
 [
   check('Username', 'Username is required').isLength({min: 5}),
   check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
@@ -119,6 +119,7 @@ pp.post('/users',
 
 
 // Update a user's info, by username
+
 /* We’ll expect JSON in this format
 {
   Username: String,
@@ -129,7 +130,8 @@ pp.post('/users',
   (required)
   Birthday: Date
 }*/
-app.put('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.put('/Users/:Username', 
+passport.authenticate('jwt', { session: false }), async (req, res) => {
   // CONDITION TO CHECK ADDED HERE
   if(req.user.Username !== req.params.Username){
       return res.status(400).send('Permission denied');
@@ -144,7 +146,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), as
           Birthday: req.body.Birthday
       }
   },
-      { new: true }) // This line makes sure that the updated document is returned
+      { new: true }) // This  line makes sure that the updated document is returned
       .then((updatedUser) => {
           res.json(updatedUser);
       })
@@ -156,7 +158,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), as
 
 
 // Add a movie to a user's list of favorites
-app.post('/users/:Username/movies/:MovieID', 
+app.post('/Users/:Username/Movies/:MovieID', 
 passport.authenticate("jwt", { session: false }),
 async (req, res) => {
   await Users.findOneAndUpdate({ Username: req.params.Username }, {
@@ -174,11 +176,11 @@ async (req, res) => {
 
 
 //delete  users favoritemovie 
-app.delete('/users/:id/:movieTitle', passport.authenticate("jwt", { session: false }),
+app.delete('/Users/:id/:movieTitle', passport.authenticate("jwt", { session: false }),
  (req, res) => {
   const { id, movieTitle } = req.params;
 
-  let user = users.find( user => user.id == id );
+  let user = Users.find( user => user.id == id );
 
   if ( user ) {
     user.favoriteMovies = user.favoriteMovies.filter ( title => title !== movieTitle);
@@ -190,7 +192,7 @@ app.delete('/users/:id/:movieTitle', passport.authenticate("jwt", { session: fal
 
 
 // Delete a user by username
-app.delete('/users/:Username',  
+app.delete('/Users/:Username',  
 passport.authenticate('jwt', { session: false }),
  (req, res) => {
   Users.findOneAndDelete({ Username: req.params.Username })
@@ -207,11 +209,11 @@ passport.authenticate('jwt', { session: false }),
     });
 });
 
-  // READ/GET all movies
-  app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  // READ/GET all Movies
+  app.get('/Movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Movies.find()
-      .then((movies) => {
-        res.status(201).json(movies);
+      .then((Movies) => {
+        res.status(201).json(Movies);
       })
       .catch((error) => {
         console.error(error);
@@ -220,10 +222,10 @@ passport.authenticate('jwt', { session: false }),
   });
 
  // READ/GET movies title
- app.get ('/movies/:title',passport.authenticate("jwt", { session: false }),
+ app.get ('/Movies/:title',passport.authenticate("jwt", { session: false }),
   (req, res) => {
      const { title } = req.params;
-     const movie = movies.find( movie => movie.Title === title);
+     const movie = Movies.find( movie => movie.Title === title);
 
      if (movie) {
       res.status(200).json(movie);
@@ -235,7 +237,7 @@ passport.authenticate('jwt', { session: false }),
 
 
    // READ/GET movie genre
- app.get('/movies/genre/:genreName', passport.authenticate('jwt', { session: false }),
+ app.get('/Movies/genre/:genreName', passport.authenticate('jwt', { session: false }),
   (req, res) => {
   const { genreName } = req.params;
   const genre = movies.find (movie => movie.Genre.Name === genreName ).Genre;
@@ -248,10 +250,10 @@ passport.authenticate('jwt', { session: false }),
 })
 
    // READ/GET movie director
-app.get('/movies/directors/:directorName', passport.authenticate('jwt', { session: false }),
+app.get('/Movies/directors/:directorName', passport.authenticate('jwt', { session: false }),
  (req, res) => {
   const { directorName } = req.params;
-  const director = movies.find (movie => movie.Director.Name === directorName ).Director;
+  const director = Movies.find (movie => movie.Director.Name === directorName ).Director;
   
   if (director) {
     res.status(200).json(director);
