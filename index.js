@@ -25,153 +25,16 @@ const { check, validationResult } = require('express-validator');
   //}
 //}));
 
-mongoose.connect('mongodb://localhost:27017/finalattempt', 
+mongoose.connect( process.env.CONNECTION_URI, 
 { useNewUrlParser: true, useUnifiedTopology: true });
+
+//mongoose.connect('mongodb://localhost:27017/finalattempt', 
+//{ useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(bodyParser.json());
 
 app.use(morgan('common'));
 let auth = require('./auth')(app);
-
-let users = [
-  {
-    id: 1,
-    name: "Kim",
-    favoriteMovies: []
-},
-{
-  id: 2,
-    name: "Secondloco",
-    favoriteMovies: ['Arrival']
-  },
-  {
-    id: 3,
-    name: "Thirdloco",
-    favoriteMovies: ['Inception']
-  }
-];
-
-
-let movies = [
-    {
-      'Title': 'Harry Potter Series',
-      'Description': '',
-      'Genre': {
-        'Name':'fantasy literature',
-        'Description':'The novels fall into the genre of fantasy literature, and qualify as a type of fantasy called "urban fantasy", "contemporary fantasy", or "low fantasy". They are mainly dramas, and maintain a fairly serious and dark tone throughout, though they do contain some notable instances of tragicomedy and black humour.'
-      },
-      'Director': {
-        'Name': 'Chris Columbus',
-        'Bio': 'Chris Joseph Columbus is an American filmmaker. Born in Spangler, Pennsylvania, Columbus studied film at Tisch School of the Arts where he developed an interest in filmmaking.',
-        'Birth': 'September 10, 1958'
-      }
-     
-    },
-    {
-      'Title': 'Lord of the Rings: The Return of the King',
-      'Description': 'The final installment of the epic fantasy trilogy where the fellowship faces its ultimate challenge in the battle for Middle Earth.',
-      'Genre': {
-        'Name': 'Fantasy',
-        'Description': 'Fantasy genre involving epic quests and magical elements.'
-      },
-      'Director': {
-        'Name': 'Peter Jackson',
-        'Bio': 'Peter Jackson is a New Zealand film director, producer, and screenwriter. He is best known for his work on the film adaptations of J.R.R. Tolkien\'s novels.',
-        'Birth': 'October 31, 1961'
-      }
-    },
-    {
-      'Title': 'The Dark Knight',
-  'Description': 'In this superhero film, Batman faces the Joker, a criminal mastermind who seeks to create chaos in Gotham City. The battle between the two forces Batman to confront his own moral limits.',
-  'Genre': {
-    'Name': 'Action',
-    'Description': 'Action film involving intense conflicts, often with a central superhero or protagonist.'
-  },
-  'Director': {
-    'Name': 'Christopher Nolan',
-    'Bio': 'Best known for his cerebral, often nonlinear, storytelling, acclaimed writer-director Christopher Nolan has made a significant impact in the world of filmmaking.',
-    'Birth': 'July 30, 1970'
-  }
-    },
-    {
-      'Title': 'Shutter Island',
-      'Description': 'In this psychological thriller, two U.S. Marshals investigate the disappearance of a prisoner from a mental institution, uncovering dark secrets and facing personal challenges.',
-      'Genre': {
-        'Name': 'Mystery',
-        'Description': 'Mystery films involve suspenseful and perplexing plots that engage the audience in solving a crime or uncovering hidden truths.'
-      },
-      'Director': {
-        'Name': 'Martin Scorsese',
-        'Bio': 'Martin Scorsese is an American film director, producer, screenwriter, and actor. He is widely regarded as one of the greatest directors in the history of cinema.',
-        'Birth': 'November 17, 1942'
-      }
-    },
-    {
-      'Title': 'Arrival',
-  'Description': 'A linguist is recruited to help communicate with extraterrestrial visitors whose mysterious arrival sparks global tensions. As she delves into their language, she unlocks profound revelations.',
-  'Genre': {
-    'Name': 'Science Fiction',
-    'Description': 'Science fiction films explore speculative concepts, often involving advanced technology, space exploration, and extraterrestrial life.'
-  },
-  'Director': {
-    'Name': 'Denis Villeneuve',
-    'Bio': 'Denis Villeneuve is a Canadian film director and writer. Known for his visually stunning and thought-provoking films, he has gained recognition in the world of cinema.',
-    'Birth': 'October 3, 1967'
-  }
-    },
-    {
-      'Title': 'Interstellar',
-      'Description': 'In this science fiction epic, a team of explorers embarks on a space journey through a wormhole to find a new habitable planet for humanity facing extinction on Earth.',
-      'Genre': {
-        'Name': 'Science Fiction',
-        'Description': 'Science fiction films explore speculative concepts, often involving advanced technology, space exploration, and extraterrestrial life.'
-      },
-      'Director': {
-        'Name': 'Christopher Nolan',
-        'Bio': 'Christopher Nolan continues his exploration of complex narratives and breathtaking visuals in this interstellar odyssey.',
-        'Birth': 'July 30, 1970'
-      }
-    },
-    {
-      'Title': 'Lone Survivor',
-      'Description': 'Based on true events, this war film recounts the failed mission of a Navy SEAL team in Afghanistan and the harrowing survival story of the lone survivor.',
-      'Genre': {
-        'Name': 'War',
-        'Description': 'War films depict conflicts, battles, and the impact of war on individuals and societies.'
-      },
-      'Director': {
-        'Name': 'Peter Berg',
-        'Bio': 'Peter Berg is an American director, producer, writer, and actor. He has worked on a variety of films, exploring themes of courage and resilience.',
-        'Birth': 'March 11, 1964'
-      }
-    },
-    {
-      'Title': 'Spider-Man: Across the Spider-Verse',
-      'Description': 'In this animated superhero film, Spider-Man teams up with alternate versions of himself from different dimensions to stop a powerful threat that spans across the multiverse.',
-      'Genre': {
-        'Name': 'Animation',
-        'Description': 'Animated films use visual techniques to create a captivating and imaginative storytelling experience.'
-      },
-      'Director': {
-        'Name': 'Joaquim Dos Santos, Kemp Powers',
-        'Bio': 'The creative duo brings their expertise to the animated superhero world, delivering a visually stunning and dynamic Spider-Verse story.',
-        'Birth': 'Director 1 Birth Date, Director 2 Birth Date'
-      }
-    },
-    {
-      'Title': 'Howls Moving Castle',
-      'Description':'A young woman is cursed with an old body by a spiteful witch. As she seeks a way to break the curse, she becomes involved with a wizard named Howl and his magical moving castle.',
-      'Genre':{
-        'Name':'Animation',
-        'Description':'Animated films are those in which individual drawings, paintings, or illustrations are photographed frame by frame (stop-frame cinematography).'
-      },
-      'Director': {
-        'Name': 'Hayao Miyazaki',
-        'Bio':'Hayao Miyazaki is a Japanese animator, director, producer, screenwriter, author, and co-founder of Studio Ghibli. He is considered one of the greatest animators and directors in the history of cinema.',
-        'Birth':'January 5, 1941'
-      }
-    }
-  ];
 
 
    // READ/GET all users
@@ -421,3 +284,4 @@ const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0',() => {
  console.log('Listening on Port ' + port);
 });
+
