@@ -8,7 +8,6 @@ const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 const cors = require('cors');
-app.use(cors());
 const passport = require('passport');
 require('./passport');
 const { check, validationResult } = require('express-validator');
@@ -60,7 +59,7 @@ app.get('/', (req, res) => {
 app.get('/users/:Username',
  passport.authenticate("jwt", { session: false }),
  async (req, res) => {
-  await users.findOne({ Username: req.params.Username })
+  await Users.findOne({ Username: req.params.Username })
     .then((users
       ) => {
       res.json(users);
@@ -81,46 +80,45 @@ app.get('/users/:Username',
   Email: String,
   Birthday: Date
 }*/
-app.post('/users',
-[
-  check('Username', 'Username is required').isLength({min: 5}),
-  check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
-  check('Password', 'Password is required').not().isEmpty(),
-  check('Email', 'Email does not appear to be valid').isEmail()
-], async (req, res) => {
+app.post('/users', 
+   [ check('UserName', 'UserName is required').isLength({min:5}),
+    check('UserName', 'UserName contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()], 
+    async (req, res) => {
+        let errors = validationResult(req);
 
-// check the validation object for errors
-  let errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
-
-  let hashedPassword = users.hashPassword(req.body.Password);
-  await users.findOne({ Username: req.body.Username }) // Search to see if a user with the requested username already exists
-    .then((user) => {
-      if (user) {
-        //If the user is found, send a response that it already exists
-        return res.status(400).send(req.body.Username + ' already exists');
-      } else {
-        Users
-          .create({
-            Username: req.body.Username,
-            Password: hashedPassword,
-            Email: req.body.Email,
-            Birthday: req.body.Birthday
+        if (!errors.isEmpty()) {
+          return res.status(422).json({ errors: errors.array() });
+        }
+        let hashedPassword = Users.hashPassword(req.body.Password);
+        await Users.findOne({ UserName: req.body.UserName })
+          .then((user) => {
+            if (user) {
+              return res
+                .status(400)
+                .send(req.body.UserName + " already exists");
+            } else {
+              Users.create({
+                UserName: req.body.UserName,
+                Password: hashedPassword,
+                Email: req.body.Email,
+                Birthdate: req.body.Birthday,
+              })
+                .then((user) => {
+                  res.status(201).json(user);
+                })
+                .catch((error) => {
+                  console.error(error);
+                  res.status(500).send("Error: " + error);
+                });
+            }
           })
-          .then((user) => { res.status(201).json(user) })
           .catch((error) => {
             console.error(error);
-            res.status(500).send('Error: ' + error);
+            res.status(500).send("Error " + error);
           });
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send('Error: ' + error);
-    });
+
 });
 
 
@@ -186,7 +184,7 @@ async (req, res) => {
 //delete  users favoritemovie 
 app.delete('/users/:username/movies/:movieId', passport.authenticate('jwt', { session: false }),
  async (req, res)=>{
-    await Users.findOneAndUpdate({ UserName: req.params.username}, {
+    await Users.findOneAndUpdate({ UserName: req.params.Username}, {
         $pull:{FavoriteMovies: req.params.movieId}
     }, 
     { new: true})
@@ -202,7 +200,7 @@ app.delete('/users/:username/movies/:movieId', passport.authenticate('jwt', { se
 // Delete a user by username
 app.delete('/users/:username', passport.authenticate ('jwt', { session: false }),
  async (req, res)=>{ 
-    if( req.user.UserName !== req.params.username) {
+    if( req.user.UserName !== req.params.Username) {
         return res.status(400).send('Permission denied');
     }
     await Users.findOneAndUpdate({ UserName: req.params.username})
