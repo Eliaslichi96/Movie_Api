@@ -81,8 +81,8 @@ app.get('/users/:Username',
   Birthday: Date
 }*/
 app.post('/users', 
-   [ check('UserName', 'UserName is required').isLength({min:5}),
-    check('UserName', 'UserName contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+   [ check('Username', 'Username is required').isLength({min:5}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
     check('Password', 'Password is required').not().isEmpty(),
     check('Email', 'Email does not appear to be valid').isEmail()], 
     async (req, res) => {
@@ -92,15 +92,15 @@ app.post('/users',
           return res.status(422).json({ errors: errors.array() });
         }
         let hashedPassword = Users.hashPassword(req.body.Password);
-        await Users.findOne({ UserName: req.body.UserName })
+        await Users.findOne({ Username: req.body.Username })
           .then((user) => {
             if (user) {
               return res
                 .status(400)
-                .send(req.body.UserName + " already exists");
+                .send(req.body.Username + " already exists");
             } else {
               Users.create({
-                UserName: req.body.UserName,
+                Username: req.body.Username,
                 Password: hashedPassword,
                 Email: req.body.Email,
                 Birthdate: req.body.Birthday,
