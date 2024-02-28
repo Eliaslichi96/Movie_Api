@@ -262,6 +262,21 @@ app.get('/movies/genre/:genre',
         res.status(500).send('Error: ' + err);
       });
   });
+// READ/GET all directors
+
+app.get(
+  "/movies/directors",
+  async (req, res) => {
+    await Directors.find()
+      .then((directors) => {
+        res.status(201).json(directors);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      });
+  }
+);
 
 // READ/GET movie director
 app.get('/movies/director/:directorName',
