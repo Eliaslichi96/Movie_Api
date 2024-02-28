@@ -232,7 +232,7 @@ app.get('/movies',
   });
 
 // READ/GET movies title
-app.get('/movies/:title', passport.authenticate('jwt', { session: false }),
+app.get('/movies/:title',
   async (req, res) => {
     await Movies.findOne({ Title: req.params.title })
       .then((movie) => {
