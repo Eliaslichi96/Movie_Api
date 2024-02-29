@@ -267,7 +267,7 @@ app.get('/movies/genre/:genre',
 app.get(
   "/movies/directors",
   async (req, res) => {
-    await Directors.find()
+    await Movies.find(Director.Name)
       .then((directors) => {
         res.status(201).json(directors);
       })
