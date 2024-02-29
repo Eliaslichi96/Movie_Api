@@ -264,8 +264,7 @@ app.get('/movies/genre/:genre',
   });
 // READ/GET all directors
 
-app.get(
-  "/movies/directors",
+app.get('/movies/director',
   async (req, res) => {
     await Movies.find(Director.Name)
       .then((directors) => {
