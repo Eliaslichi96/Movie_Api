@@ -262,20 +262,6 @@ app.get('/movies/genre/:genre',
         res.status(500).send('Error: ' + err);
       });
   });
-// READ/GET all directors
-
-app.get('/movies/director',
-  async (req, res) => {
-    await Movies.find(Director.Name)
-      .then((directors) => {
-        res.status(201).json(directors);
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500).send("Error: " + err);
-      });
-  }
-);
 
 // READ/GET movie director
 app.get('/movies/director/:directorName',
@@ -295,7 +281,7 @@ app.get('/movies/director/:directorName',
       });
   });
 
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234'];
 
 app.use(cors({
   origin: (origin, callback) => {
