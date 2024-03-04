@@ -8,10 +8,11 @@ const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 const cors = require('cors');
+
 const passport = require('passport');
 require('./passport');
 const { check, validationResult } = require('express-validator');
-
+app.use(cors());
 // only certain origins to be given access 
 //app.use(cors({
 //origin: (origin, callback) => {
@@ -282,19 +283,7 @@ app.get('/movies/director/:directorName',
   });
 
 
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234'];
-//allow specific set of origins to access your API
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      // If a specific origin isn’t found on the list of allowed origins
-      let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
-      return callback(new Error(message), false);
-    }
-    return callback(null, true);
-  }
-}));
+
 
 app.use('/documentation', express.static('public', { index: 'documentation.html' }));
 
