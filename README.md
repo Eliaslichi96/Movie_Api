@@ -1,7 +1,7 @@
 # Movie API Documentation
 
 ## Description
-This API provide users with access to information about different movies, directors, and genres. Users are able to sign up, update their personal information, and create a list of their favorite movies.
+"This API offers users access to a wide range of information about different movies, directors, and genres. Users can sign up, update their personal information, and create a list of their favorite movies."
 
 ## Dependencies
 * **Node.js**: JavaScript runtime for server-side scripting.
